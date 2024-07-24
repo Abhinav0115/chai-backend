@@ -1,0 +1,1 @@
+export const DB_NAME = "chaiCode_backend_db";
