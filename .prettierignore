@@ -1,0 +1,14 @@
+*.env
+/node_modules
+/build
+./dist
+./coverage
+/.cache
+/.history
+/.vscode
+
+.env
+.env.local
+.env.development
+.env.test
+.env.production
