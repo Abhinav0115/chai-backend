@@ -9,8 +9,7 @@ export const registerUser = asyncHandler(async (req, res) => {
 
     const { username, fullName, email, password } = req.body;
 
-    //IMP: validation user -  not empty
-
+    //IMP: validation user -  not empty, email valid, user exists, images, avatar
     //Method 1
     // if (!username || !fullName || !email || !password) {
     //     throw new ApiError(400, "All fields are required");
@@ -31,7 +30,7 @@ export const registerUser = asyncHandler(async (req, res) => {
 
     //IMP: check if user already exists: username, email
 
-    const user = User.findOne({ $or: [{ username }, { email }] });
+    const user = await User.findOne({ $or: [{ username }, { email }] });
 
     if (user) {
         throw new ApiError(409, "User already exists");
@@ -40,7 +39,11 @@ export const registerUser = asyncHandler(async (req, res) => {
     //IMP: check for images, check for avatar
 
     const avatarLocalPath = req.files?.avatar[0]?.path;
-    const coverImageLocalPath = req.files?.coverImage[0]?.path;
+    let coverImageLocalPath;
+
+    if (req.files?.coverImage && req.files?.coverImage[0]) {
+        coverImageLocalPath = req.files?.coverImage[0]?.path;
+    }
 
     if (!avatarLocalPath) {
         throw new ApiError(400, "Avatar is required");
@@ -56,15 +59,16 @@ export const registerUser = asyncHandler(async (req, res) => {
     }
 
     //IMP: create user object — create entry in db
-
     const newUser = new User({
         username: username.toLowerCase(),
         fullName,
         email,
         password,
-        avatar: avatar.url,
-        coverImage: coverImage?.url || null,
+        avatar: avatar?.url,
+        coverImage: coverImage?.url || "",
     });
+
+    await newUser.save();
 
     //IMP: remove password and refresh token field from response
 
@@ -81,5 +85,5 @@ export const registerUser = asyncHandler(async (req, res) => {
 
     return res
         .status(201)
-        .json(new ApiResponse(201, createdUser, "User register successfully"));
+        .json(new ApiResponse(201, "User register successfully", createdUser));
 });
