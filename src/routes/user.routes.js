@@ -3,6 +3,7 @@ import {
     registerUser,
     loginUser,
     logoutUser,
+    refreshAccessToken,
 } from "../controllers/user.controller.js";
 import { upload } from "../middelware/multer.middleware.js";
 import { VerifyJWT } from "../middelware/auth.middleware.js";
@@ -26,5 +27,8 @@ router.route("/login").post(loginUser);
 //    -> logout
 router.route("/logout").post(VerifyJWT, logoutUser);
 // The above code is equivalent to:  -> // router.post("/logout", VerifyJWT, logoutUser);
+
+//    ->get new access token
+router.post("/refresh-token", refreshAccessToken);
 
 export default router;
