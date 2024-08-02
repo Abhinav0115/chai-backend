@@ -7,6 +7,7 @@ import indexRoutes from "./routes/index.routes.js";
 
 const app = express();
 
+
 // Enable CORS
 app.use(
     cors({
@@ -14,6 +15,7 @@ app.use(
         credentials: true,
     })
 );
+
 
 // Parse JSON bodies (as sent by API clients)
 app.use(express.json());
